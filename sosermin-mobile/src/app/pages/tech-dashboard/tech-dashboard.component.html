@@ -1,0 +1,239 @@
+<ion-header>
+  <ion-toolbar color="tertiary">
+    <ion-title>Panel Tecnico</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="loadIncidents()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="tech-content" [scrollY]="true">
+  <main class="tech-shell">
+    <section class="hero-panel">
+      <p>Personal de campo</p>
+      <h1>Mis tareas asignadas</h1>
+      <div class="metrics-grid">
+        <article>
+          <strong>{{ pendingCount }}</strong>
+          <span>Asignadas</span>
+        </article>
+        <article>
+          <strong>{{ inProcessCount }}</strong>
+          <span>En proceso</span>
+        </article>
+        <article>
+          <strong>{{ pausedCount }}</strong>
+          <span>Pausadas</span>
+        </article>
+        <article>
+          <strong>{{ finishedCount }}</strong>
+          <span>Finalizadas</span>
+        </article>
+      </div>
+    </section>
+
+    <nav class="tech-tabs">
+      <button type="button" [class.active]="activeTab === 'activas'" (click)="setTab('activas')">
+        Activas
+      </button>
+      <button type="button" [class.active]="activeTab === 'historial'" (click)="setTab('historial')">
+        Historial
+      </button>
+    </nav>
+
+    <p *ngIf="message" class="status-message">{{ message }}</p>
+
+    <div class="filters-row">
+      <input [(ngModel)]="searchTerm" name="taskSearch" type="search" placeholder="Buscar ticket, cliente o descripcion" />
+      <select [(ngModel)]="statusFilter" name="statusFilter">
+        <option value="TODOS">Todos los estados</option>
+        <option value="Asignado">Asignado</option>
+        <option value="En Proceso">En proceso</option>
+        <option value="Pausado">Pausado</option>
+        <option value="Finalizado">Finalizado</option>
+      </select>
+      <select [(ngModel)]="priorityFilter" name="priorityFilter">
+        <option value="TODOS">Todas las prioridades</option>
+        <option value="High">Alta</option>
+        <option value="Medium">Media</option>
+        <option value="Low">Baja</option>
+      </select>
+      <select [(ngModel)]="sortMode" name="sortMode">
+        <option value="PRIORIDAD">Prioridad</option>
+        <option value="FECHA">Fecha</option>
+        <option value="ESTADO">Estado</option>
+      </select>
+    </div>
+
+    <ion-list *ngIf="activeTab === 'activas'">
+      <ion-item *ngFor="let incident of activeIncidents" class="task-item">
+        <article class="task-card">
+          <div class="task-topline">
+            <div>
+              <p>#{{ incident.id }} - {{ incident.clienteNombre || 'Sin cliente' }}</p>
+              <h2>{{ incident.title }}</h2>
+            </div>
+            <ion-badge [color]="getStatusColor(getState(incident))">{{ getState(incident) }}</ion-badge>
+          </div>
+
+          <p class="description">{{ incident.description }}</p>
+
+          <div class="meta-grid">
+            <span>Prioridad: <strong>{{ getPriorityLabel(incident.severity) }}</strong></span>
+            <span>Categoria: <strong>{{ incident.categoria || 'General' }}</strong></span>
+            <span>Creado: <strong>{{ incident.fecha | date:'short' }}</strong></span>
+            <span>Asignado: <strong>{{ incident.fechaAsignacion ? (incident.fechaAsignacion | date:'short') : 'Sin dato' }}</strong></span>
+            <span>Inicio: <strong>{{ incident.fechaInicio ? (incident.fechaInicio | date:'short') : 'Sin dato' }}</strong></span>
+          </div>
+
+          <div class="quick-actions">
+            <button type="button" class="outline-button" (click)="toggleDetail(incident)">
+              <ion-icon name="eye-outline"></ion-icon>
+              {{ selectedIncidentId === incident.id ? 'Ocultar' : 'Detalle' }}
+            </button>
+            <button type="button" class="outline-button" (click)="openMap(incident.latitud, incident.longitud)">
+              <ion-icon name="locate-outline"></ion-icon>
+              Ubicacion
+            </button>
+          </div>
+
+          <section *ngIf="selectedIncidentId === incident.id" class="detail-panel">
+            <div class="resolution-box" *ngIf="incident.comentarioCliente">
+              <strong>Observacion del cliente</strong>
+              <p>{{ incident.comentarioCliente }}</p>
+            </div>
+
+            <div class="evidence-grid">
+              <div class="evidence-box" *ngIf="incident.fotoUrl">
+                <strong>Evidencia del cliente</strong>
+                <img [src]="incident.fotoUrl" alt="Evidencia del cliente" />
+              </div>
+              <div class="evidence-box" *ngIf="incident.fotoAntesTecnicoUrl || fotoAntesBase64">
+                <strong>Antes del trabajo</strong>
+                <img [src]="incident.fotoAntesTecnicoUrl || fotoAntesBase64" alt="Evidencia antes del trabajo" />
+              </div>
+            </div>
+
+            <div class="work-actions" *ngIf="finalizingIncidentId !== incident.id">
+              <button type="button" class="outline-button" (click)="capturarFotoAntes(incident)">
+                <ion-icon name="camera-outline"></ion-icon>
+                Foto antes
+              </button>
+              <button type="button" class="primary-action" *ngIf="getState(incident) === 'Asignado'" (click)="iniciarTrabajo(incident)">
+                <ion-icon name="play-outline"></ion-icon>
+                Iniciar
+              </button>
+              <button type="button" class="outline-button" *ngIf="getState(incident) === 'En Proceso'" (click)="pausarTrabajo(incident)">
+                <ion-icon name="pause-outline"></ion-icon>
+                Pausar
+              </button>
+              <button type="button" class="primary-action" *ngIf="getState(incident) === 'Pausado'" (click)="reanudarTrabajo(incident)">
+                <ion-icon name="play-outline"></ion-icon>
+                Reanudar
+              </button>
+              <button type="button" class="success-action" *ngIf="getState(incident) === 'En Proceso' || getState(incident) === 'Pausado'" (click)="prepararFinalizar(incident)">
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                Finalizar
+              </button>
+            </div>
+
+            <div class="finalization-panel" *ngIf="finalizingIncidentId === incident.id">
+              <label>
+                <span>Informe tecnico</span>
+                <ion-textarea
+                  [(ngModel)]="comentarios"
+                  placeholder="Describe solucion aplicada, repuestos o insumos usados."
+                  rows="4">
+                </ion-textarea>
+              </label>
+
+              <button type="button" class="outline-button full" (click)="tomarFotoCierre()">
+                <ion-icon name="camera-outline"></ion-icon>
+                {{ fotoCierreBase64 ? 'Cambiar foto de cierre' : 'Tomar foto de cierre' }}
+              </button>
+
+              <div class="evidence-box" *ngIf="fotoCierreBase64">
+                <strong>Despues del trabajo</strong>
+                <img [src]="fotoCierreBase64" alt="Evidencia de cierre" />
+              </div>
+
+              <div class="finish-actions">
+                <button type="button" class="outline-button" (click)="cancelarFinalizar()">Cancelar</button>
+                <button type="button" class="success-action" [disabled]="!comentarios.trim() || !fotoCierreBase64" (click)="finalizarTrabajo()">
+                  Completar
+                </button>
+              </div>
+            </div>
+          </section>
+        </article>
+      </ion-item>
+
+      <ion-item *ngIf="activeIncidents.length === 0" class="empty-item">
+        <ion-label class="ion-text-center">No tienes tareas activas con esos filtros.</ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-list *ngIf="activeTab === 'historial'">
+      <ion-item *ngFor="let incident of historyIncidents" class="task-item">
+        <article class="task-card">
+          <div class="task-topline">
+            <div>
+              <p>#{{ incident.id }} - {{ incident.clienteNombre || 'Sin cliente' }}</p>
+              <h2>{{ incident.title }}</h2>
+            </div>
+            <ion-badge [color]="getStatusColor(getState(incident))">{{ getState(incident) }}</ion-badge>
+          </div>
+
+          <div class="meta-grid">
+            <span>Inicio: <strong>{{ incident.fechaInicio ? (incident.fechaInicio | date:'short') : 'Sin dato' }}</strong></span>
+            <span>Cierre: <strong>{{ incident.fechaCierre ? (incident.fechaCierre | date:'short') : 'Sin dato' }}</strong></span>
+            <span>Tiempo: <strong>{{ formatHours(incident.fechaInicio || incident.fecha, incident.fechaCierre) }}</strong></span>
+            <span>Documentacion: <strong>{{ incident.fotoResolucionUrl && incident.comentarios ? 'Completa' : 'Incompleta' }}</strong></span>
+          </div>
+
+          <button type="button" class="outline-button full" (click)="toggleDetail(incident)">
+            <ion-icon name="eye-outline"></ion-icon>
+            {{ selectedIncidentId === incident.id ? 'Ocultar detalle' : 'Ver detalle' }}
+          </button>
+
+          <section *ngIf="selectedIncidentId === incident.id" class="detail-panel">
+            <p class="description">{{ incident.description }}</p>
+            <div class="evidence-grid">
+              <div class="evidence-box" *ngIf="incident.fotoAntesTecnicoUrl || incident.fotoUrl">
+                <strong>Antes</strong>
+                <img [src]="incident.fotoAntesTecnicoUrl || incident.fotoUrl" alt="Evidencia antes" />
+              </div>
+              <div class="evidence-box" *ngIf="incident.fotoResolucionUrl">
+                <strong>Despues</strong>
+                <img [src]="incident.fotoResolucionUrl" alt="Evidencia despues" />
+              </div>
+            </div>
+            <div class="resolution-box">
+              <strong>Informe tecnico</strong>
+              <p>{{ incident.comentarios || 'Sin informe registrado.' }}</p>
+            </div>
+            <div class="quick-actions">
+              <button type="button" class="outline-button" (click)="openMap(incident.latitudInicio || incident.latitud, incident.longitudInicio || incident.longitud)">
+                <ion-icon name="locate-outline"></ion-icon>
+                GPS inicio
+              </button>
+              <button type="button" class="outline-button" (click)="openMap(incident.latitudCierre, incident.longitudCierre)">
+                <ion-icon name="locate-outline"></ion-icon>
+                GPS cierre
+              </button>
+            </div>
+          </section>
+        </article>
+      </ion-item>
+
+      <ion-item *ngIf="historyIncidents.length === 0" class="empty-item">
+        <ion-label class="ion-text-center">No hay trabajos finalizados con esos filtros.</ion-label>
+      </ion-item>
+    </ion-list>
+  </main>
+</ion-content>

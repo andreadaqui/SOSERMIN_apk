@@ -1,0 +1,61 @@
+<ion-content class="module-content" [scrollY]="true">
+  <main class="module-shell">
+    <header class="module-topbar">
+      <button type="button" class="back-button" (click)="volverAlHome()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </button>
+      <strong>Reportes</strong>
+    </header>
+
+    <section class="module-title">
+      <p class="eyebrow">Indicadores</p>
+      <h1>Resumen operativo</h1>
+      <p>Estado general de seguridad, personal e incidencias reportadas.</p>
+    </section>
+
+    <section class="metric-grid">
+      <article class="metric-card safety">
+        <span><ion-icon name="shield-checkmark-outline"></ion-icon></span>
+        <small>Cumplimiento</small>
+        <strong>94.5%</strong>
+      </article>
+
+      <article class="metric-card incidents">
+        <span><ion-icon name="stats-chart-outline"></ion-icon></span>
+        <small>Incidencias</small>
+        <strong>12</strong>
+      </article>
+
+      <article class="metric-card staff">
+        <span><ion-icon name="bar-chart-outline"></ion-icon></span>
+        <small>Personal</small>
+        <strong>48</strong>
+      </article>
+    </section>
+
+    <section class="report-panel">
+      <h2>Riesgos por categoria</h2>
+
+      <div class="risk-row" *ngFor="let risk of risks">
+        <div class="risk-heading">
+          <span>{{ risk.name }}</span>
+          <strong>{{ risk.value }}%</strong>
+        </div>
+        <div class="risk-track">
+          <span [class]="risk.level" [style.width.%]="risk.value"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="report-panel">
+      <h2>Ultimos movimientos</h2>
+      <div class="timeline-item" *ngFor="let item of timeline">
+        <span></span>
+        <div>
+          <strong>{{ item.title }}</strong>
+          <small>{{ item.detail }}</small>
+        </div>
+      </div>
+    </section>
+  </main>
+</ion-content>

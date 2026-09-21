@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/app/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalle de Incidencia</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  
+  <div *ngIf="incident; else loading">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>ID de Registro: {{ incident.id }}</ion-card-subtitle>
+        <ion-card-title>{{ incident.title }}</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p class="ion-margin-bottom"><strong>Descripción:</strong></p>
+        <p>{{ incident.description }}</p>
+
+        <ion-item lines="none" class="ion-margin-top">
+          <ion-label>Severidad:</ion-label>
+          <ion-badge color="medium" slot="end">{{ incident.severity }}</ion-badge>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label>Fecha de creación:</ion-label>
+          <ion-note slot="end">{{ incident.createdAt | date:'short' }}</ion-note>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <ng-template #loading>
+    <div class="ion-text-center ion-padding">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando detalles del incidente...</p>
+    </div>
+  </ng-template>
+
+</ion-content>

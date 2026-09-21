@@ -1,0 +1,83 @@
+<ion-content class="home-content" [scrollY]="true">
+  <main class="home-shell">
+    <header class="topbar">
+      <div class="brand-lockup">
+        <img src="assets/icon/logo-sosermin.png" alt="SOSERMIN" />
+        <span>SOSERMIN</span>
+      </div>
+
+      <button type="button" class="logout-button" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        <span>Salir</span>
+      </button>
+    </header>
+
+    <section class="home-hero">
+      <p class="eyebrow">Panel principal</p>
+      <h1>Bienvenido {{ nombreUsuario }}</h1>
+      <p>Gestiona seguridad, novedades, asistencia y reportes desde un tablero central.</p>
+    </section>
+
+    <section class="module-grid" aria-label="Modulos SOSERMIN">
+      <button type="button" class="module-card incident" (click)="irAIncidencias()">
+        <span class="module-art">
+          <img src="assets/modules/incidents.svg" alt="" />
+        </span>
+        <span class="module-body">
+          <span class="module-label">Operacion</span>
+          <strong>Incidencias</strong>
+          <small>Reportar novedades con evidencia y ubicacion.</small>
+        </span>
+        <ion-icon class="module-arrow" name="chevron-forward-outline"></ion-icon>
+      </button>
+
+      <button type="button" class="module-card courses" (click)="irACursos()">
+        <span class="module-art">
+          <img src="assets/modules/courses.svg" alt="" />
+        </span>
+        <span class="module-body">
+          <span class="module-label">Formacion</span>
+          <strong>Cursos</strong>
+          <small>Capacitaciones, avances y prioridades.</small>
+        </span>
+        <ion-icon class="module-arrow" name="chevron-forward-outline"></ion-icon>
+      </button>
+
+      <button type="button" class="module-card attendance" (click)="irAAsistencia()">
+        <span class="module-art">
+          <img src="assets/modules/attendance.svg" alt="" />
+        </span>
+        <span class="module-body">
+          <span class="module-label">Guardia</span>
+          <strong>Asistencia</strong>
+          <small>Registro diario del personal operativo.</small>
+        </span>
+        <ion-icon class="module-arrow" name="chevron-forward-outline"></ion-icon>
+      </button>
+
+      <button type="button" class="module-card reports" (click)="irAReportes()">
+        <span class="module-art">
+          <img src="assets/modules/reports.svg" alt="" />
+        </span>
+        <span class="module-body">
+          <span class="module-label">Analisis</span>
+          <strong>Reportes</strong>
+          <small>Indicadores, riesgos y seguimiento.</small>
+        </span>
+        <ion-icon class="module-arrow" name="chevron-forward-outline"></ion-icon>
+      </button>
+
+      <button type="button" class="module-card info" (click)="irAInformacion()">
+        <span class="module-art">
+          <img src="assets/modules/reports.svg" alt="" style="filter: hue-rotate(90deg);" />
+        </span>
+        <span class="module-body">
+          <span class="module-label">General</span>
+          <strong>Informacion</strong>
+          <small>Datos generales, politicas y avisos.</small>
+        </span>
+        <ion-icon class="module-arrow" name="chevron-forward-outline"></ion-icon>
+      </button>
+    </section>
+  </main>
+</ion-content>

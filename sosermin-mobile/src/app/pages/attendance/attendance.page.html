@@ -1,0 +1,70 @@
+<ion-content class="module-content" [scrollY]="true">
+  <main class="module-shell">
+    <header class="module-topbar">
+      <button type="button" class="back-button" (click)="volverAlHome()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </button>
+      <strong>Asistencia</strong>
+    </header>
+
+    <section class="module-title">
+      <p class="eyebrow">Control de guardia</p>
+      <h1>Registro diario</h1>
+      <p>Marca la asistencia del turno operativo y valida el ingreso del personal.</p>
+    </section>
+
+    <section class="info-panel">
+      <div class="info-row">
+        <span class="info-icon"><ion-icon name="time-outline"></ion-icon></span>
+        <div>
+          <small>Fecha</small>
+          <strong>{{ fechaActual }}</strong>
+        </div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon location"><ion-icon name="location-outline"></ion-icon></span>
+        <div>
+          <small>Campamento</small>
+          <strong>Sector Norte - Mina SOSERMIN</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="attendance-card" *ngIf="!asistenciaRegistrada(); else successBlock">
+      <h2>Seleccione su turno actual</h2>
+
+      <div class="shift-list">
+        <label class="shift-option" [class.selected]="turnoSeleccionado === 'Manana (07:00 - 15:00)'">
+          <input type="radio" name="turno" value="Manana (07:00 - 15:00)" [(ngModel)]="turnoSeleccionado" />
+          <span>
+            <strong>Turno manana</strong>
+            <small>07:00 - 15:00</small>
+          </span>
+        </label>
+
+        <label class="shift-option" [class.selected]="turnoSeleccionado === 'Tarde (15:00 - 23:00)'">
+          <input type="radio" name="turno" value="Tarde (15:00 - 23:00)" [(ngModel)]="turnoSeleccionado" />
+          <span>
+            <strong>Turno tarde</strong>
+            <small>15:00 - 23:00</small>
+          </span>
+        </label>
+      </div>
+
+      <button type="button" class="primary-button" (click)="registrarAsistencia()">
+        Marcar asistencia
+      </button>
+    </section>
+
+    <ng-template #successBlock>
+      <section class="success-card">
+        <span class="success-icon">
+          <ion-icon name="checkbox-outline"></ion-icon>
+        </span>
+        <h2>Asistencia registrada</h2>
+        <p>Turno asignado: <strong>{{ turnoSeleccionado }}</strong></p>
+        <small>Su ingreso ha sido validado correctamente en el sistema.</small>
+      </section>
+    </ng-template>
+  </main>
+</ion-content>

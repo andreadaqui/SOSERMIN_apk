@@ -1,0 +1,70 @@
+<ion-content class="register-content" [scrollY]="true">
+  <main class="register-shell">
+    <section class="register-card">
+      <div class="card-heading">
+        <h1>Registro de Usuario</h1>
+        <p>Crea una cuenta para acceder al sistema.</p>
+      </div>
+
+      <label class="field">
+        <span>Nombre completo</span>
+        <input
+          [(ngModel)]="nombre"
+          name="nombre"
+          type="text"
+          autocomplete="name"
+          placeholder="Ej. Juan Perez" />
+      </label>
+
+      <label class="field">
+        <span>Cedula</span>
+        <input
+          [(ngModel)]="cedula"
+          name="cedula"
+          type="text"
+          inputmode="numeric"
+          placeholder="Ingresa tu cedula" />
+      </label>
+
+      <label class="field">
+        <span>Correo electronico</span>
+        <input
+          [(ngModel)]="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          placeholder="correo@ejemplo.com" />
+      </label>
+
+      <label class="field">
+        <span>Contrasena</span>
+        <input
+          [(ngModel)]="password"
+          name="password"
+          type="password"
+          autocomplete="new-password"
+          placeholder="Crea una contrasena" />
+      </label>
+
+      <label class="field">
+        <span>Rol de usuario</span>
+        <select [(ngModel)]="rol" name="rol">
+          <option value="CLIENTE">Cliente</option>
+          <option value="TECNICO">Tecnico</option>
+        </select>
+      </label>
+
+      <p *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </p>
+
+      <button type="button" class="primary-button" (click)="onRegister()">
+        REGISTRARSE
+      </button>
+
+      <button type="button" class="login-link" (click)="volverAlLogin()">
+        Ya tienes cuenta? Inicia sesion
+      </button>
+    </section>
+  </main>
+</ion-content>

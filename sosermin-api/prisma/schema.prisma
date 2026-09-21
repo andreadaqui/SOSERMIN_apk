@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Empleado {
+  id        Int     @id @default(autoincrement())
+  nombres   String
+  cargo     String
+  usuarioId Int
+  Usuario   Usuario @relation(fields: [usuarioId], references: [id])
+}
+
+model Usuario {
+  id               Int        @id @default(autoincrement())
+  nombre           String
+  cedula           String?    @unique
+  email            String?    @unique
+  usuario          String     @unique
+  password         String
+  rol              String
+  activo           Boolean    @default(true)
+  Empleado         Empleado[]
+  incidentsCliente Incident[] @relation("ClienteIncidentes")
+  incidentsTecnico Incident[] @relation("TecnicoIncidentes")
+}
+
+model Incident {
+  id                Int      @id @default(autoincrement())
+  titulo            String
+  descripcion       String
+  categoria         String?
+  severidad         String   @default("Medium")
+  estado            String   @default("Pendiente")
+  latitud           Float?
+  longitud          Float?
+  latitudInicio     Float?
+  longitudInicio    Float?
+  latitudCierre     Float?
+  longitudCierre    Float?
+  fotoUrl           String?
+  fotoAntesTecnicoUrl String?
+  fotoResolucionUrl String?
+  comentarios       String?
+  comentarioCliente String?
+  calificacion      Int?
+  fecha             DateTime @default(now())
+  fechaAsignacion   DateTime?
+  fechaInicio       DateTime?
+  fechaCierre       DateTime?
+
+  clienteId         Int?
+  tecnicoId         Int?
+  Cliente           Usuario? @relation("ClienteIncidentes", fields: [clienteId], references: [id])
+  Tecnico           Usuario? @relation("TecnicoIncidentes", fields: [tecnicoId], references: [id])
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Ionic App</title>
+
+  <base href="/" />
+
+  <meta name="color-scheme" content="light dark" />
+  <meta name="viewport" content="viewport-fit=auto, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+
+  <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
+
+  <!-- add to homescreen for ios -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  <!-- CAPTURADOR DE ERRORES PARA PANTALLA EN BLANCO -->
+  <script>
+    window.onerror = function(msg, url, line) {
+      alert("⚠️ ERROR DETECTADO:\n" + msg + "\n\nArchivo: " + url + "\nLínea: " + line);
+      return false;
+    };
+    window.addEventListener('unhandledrejection', function(event) {
+      var razon = event.reason ? (event.reason.message || JSON.stringify(event.reason)) : event;
+      alert("⚠️ ERROR DE RED O API:\n" + razon);
+    });
+  </script>
+</head>
+
+<body>
+  <app-root></app-root>
+</body>
+
+</html>

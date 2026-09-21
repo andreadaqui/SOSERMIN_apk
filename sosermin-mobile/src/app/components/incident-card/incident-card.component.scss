@@ -1,0 +1,16 @@
+.incident-card-container {
+  padding: var(--spacing-md);
+  border-radius: var(--card-border-radius);
+  background-color: var(--color-bg-surface, #ffffff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 48px;
+
+  .state-error {
+    color: var(--color-bg-alert);
+  }
+
+  .description {
+    color: var(--color-text-secondary);
+    font-size: var(--font-caption);
+  }
+}

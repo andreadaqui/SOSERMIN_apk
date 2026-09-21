@@ -1,0 +1,375 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Panel Administrador</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="loadData()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="admin-content" [scrollY]="true">
+  <main class="admin-shell">
+    <nav class="admin-tabs">
+      <button type="button" [class.active]="activeTab === 'resumen'" (click)="setTab('resumen')">
+        Resumen
+      </button>
+      <button type="button" [class.active]="activeTab === 'asignacion'" (click)="setTab('asignacion')">
+        Asignacion
+      </button>
+      <button type="button" [class.active]="activeTab === 'usuarios'" (click)="setTab('usuarios')">
+        Usuarios
+      </button>
+      <button type="button" [class.active]="activeTab === 'auditoria'" (click)="setTab('auditoria')">
+        Auditoria
+      </button>
+    </nav>
+
+    <section *ngIf="activeTab === 'resumen'" class="admin-section">
+      <div class="section-heading">
+        <div>
+          <p>Supervisor</p>
+          <h1>Control operativo</h1>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <article class="metric-card primary">
+          <ion-icon name="list-outline"></ion-icon>
+          <strong>{{ totalIncidents }}</strong>
+          <span>Total reportes</span>
+        </article>
+        <article class="metric-card warning">
+          <ion-icon name="time-outline"></ion-icon>
+          <strong>{{ pendingIncidents }}</strong>
+          <span>Pendientes</span>
+        </article>
+        <article class="metric-card info">
+          <ion-icon name="build-outline"></ion-icon>
+          <strong>{{ assignedIncidents + inProcessIncidents + pausedIncidents }}</strong>
+          <span>Activos</span>
+        </article>
+        <article class="metric-card success">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <strong>{{ completionRate }}%</strong>
+          <span>Cerrados</span>
+        </article>
+        <article class="metric-card info">
+          <ion-icon name="bar-chart-outline"></ion-icon>
+          <strong>{{ formatHours(avgAssignmentHours) }}</strong>
+          <span>Prom. asignacion</span>
+        </article>
+        <article class="metric-card primary">
+          <ion-icon name="bar-chart-outline"></ion-icon>
+          <strong>{{ formatHours(avgResolutionHours) }}</strong>
+          <span>Prom. cierre</span>
+        </article>
+        <article class="metric-card success">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <strong>{{ documentedClosedIncidents }}</strong>
+          <span>Cierres completos</span>
+        </article>
+        <article class="metric-card warning">
+          <ion-icon name="time-outline"></ion-icon>
+          <strong>{{ undocumentedClosedIncidents }}</strong>
+          <span>Cierres incompletos</span>
+        </article>
+      </div>
+
+      <div class="summary-grid">
+        <section class="panel">
+          <h2>Estados de solicitudes</h2>
+          <div class="state-row">
+            <span>Pendientes</span>
+            <strong>{{ pendingIncidents }}</strong>
+          </div>
+          <div class="bar"><span [style.width.%]="totalIncidents ? (pendingIncidents / totalIncidents) * 100 : 0"></span></div>
+
+          <div class="state-row">
+            <span>Asignadas</span>
+            <strong>{{ assignedIncidents }}</strong>
+          </div>
+          <div class="bar"><span [style.width.%]="totalIncidents ? (assignedIncidents / totalIncidents) * 100 : 0"></span></div>
+
+          <div class="state-row">
+            <span>En proceso</span>
+            <strong>{{ inProcessIncidents }}</strong>
+          </div>
+          <div class="bar"><span [style.width.%]="totalIncidents ? (inProcessIncidents / totalIncidents) * 100 : 0"></span></div>
+
+          <div class="state-row">
+            <span>Pausadas</span>
+            <strong>{{ pausedIncidents }}</strong>
+          </div>
+          <div class="bar"><span [style.width.%]="totalIncidents ? (pausedIncidents / totalIncidents) * 100 : 0"></span></div>
+
+          <div class="state-row">
+            <span>Finalizadas</span>
+            <strong>{{ completedIncidents }}</strong>
+          </div>
+          <div class="bar success"><span [style.width.%]="totalIncidents ? (completedIncidents / totalIncidents) * 100 : 0"></span></div>
+        </section>
+
+        <section class="panel">
+          <h2>Carga de tecnicos</h2>
+          <div *ngFor="let tech of technicians" class="tech-load">
+            <div>
+              <strong>{{ tech.nombre }}</strong>
+              <span>{{ getTechnicianWorkload(tech.id, 'Asignado') + getTechnicianWorkload(tech.id, 'En Proceso') }} tareas activas</span>
+            </div>
+            <div class="bar"><span [style.width.%]="getWorkloadPercent(tech.id)"></span></div>
+          </div>
+          <p *ngIf="technicians.length === 0" class="empty-text">No hay tecnicos registrados.</p>
+        </section>
+      </div>
+    </section>
+
+    <section *ngIf="activeTab === 'asignacion'" class="admin-section">
+      <div class="section-heading">
+        <div>
+          <p>Asignacion y reasignacion</p>
+          <h1>Solicitudes activas</h1>
+        </div>
+      </div>
+
+      <p *ngIf="incidentMessage" class="status-message">{{ incidentMessage }}</p>
+
+      <ion-list>
+        <ion-item *ngFor="let incident of assignmentIncidents" class="incident-item">
+          <div class="incident-content">
+            <div class="item-topline">
+              <h3>{{ incident.title }}</h3>
+              <ion-badge [color]="getStatusColor(getState(incident))">{{ getState(incident) }}</ion-badge>
+            </div>
+
+            <p>{{ incident.description }}</p>
+
+            <div class="meta-grid">
+              <span>Cliente: <strong>{{ incident.clienteNombre || 'Sin cliente' }}</strong></span>
+              <span>Tecnico: <strong>{{ incident.tecnicoNombre || 'Sin asignar' }}</strong></span>
+              <span>Prioridad: <strong>{{ incident.severity || 'Medium' }}</strong></span>
+            </div>
+
+            <div class="assignment-section">
+              <button type="button" class="outline-button full" (click)="autoAssignIncident(incident)">
+                Asignar automaticamente
+              </button>
+              <ion-select
+                interface="popover"
+                placeholder="Asignar tecnico"
+                [value]="incident.tecnicoId"
+                (ionChange)="assignTechnician(incident.id, $event)">
+                <ion-select-option *ngFor="let tech of technicians" [value]="tech.id">
+                  {{ tech.nombre }}
+                </ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+        </ion-item>
+
+        <ion-item *ngIf="assignmentIncidents.length === 0">
+          <ion-label class="ion-text-center">No hay solicitudes activas.</ion-label>
+        </ion-item>
+      </ion-list>
+    </section>
+
+    <section *ngIf="activeTab === 'usuarios'" class="admin-section">
+      <div class="section-heading">
+        <div>
+          <p>Gestion de usuarios</p>
+          <h1>Roles y accesos</h1>
+        </div>
+        <button type="button" class="outline-button" (click)="startNewUser()">Nuevo</button>
+      </div>
+
+      <p *ngIf="userMessage" class="status-message">{{ userMessage }}</p>
+
+      <form #userFormPanel *ngIf="userFormOpen" class="user-form" (ngSubmit)="saveUser()">
+        <div class="form-heading">
+          <div>
+            <p>{{ editingUserId ? 'Editando usuario' : 'Nuevo usuario' }}</p>
+            <h2>{{ editingUserId ? 'Actualizar datos y acceso' : 'Crear cuenta del sistema' }}</h2>
+          </div>
+          <button type="button" class="text-button" (click)="cancelUserForm()">Cancelar</button>
+        </div>
+        <label>
+          <span>Nombre</span>
+          <input [(ngModel)]="userForm.nombre" name="nombre" type="text" placeholder="Nombre completo" />
+        </label>
+        <label>
+          <span>Cedula</span>
+          <input [(ngModel)]="userForm.cedula" name="cedula" type="text" inputmode="numeric" placeholder="Cedula" />
+        </label>
+        <label>
+          <span>Correo</span>
+          <input [(ngModel)]="userForm.email" name="email" type="email" placeholder="correo@ejemplo.com" />
+        </label>
+        <label>
+          <span>Rol</span>
+          <select [(ngModel)]="userForm.rol" name="rol">
+            <option value="ADMIN">Administrador</option>
+            <option value="TECNICO">Tecnico</option>
+            <option value="CLIENTE">Cliente</option>
+          </select>
+        </label>
+        <label>
+          <span>Estado</span>
+          <select [(ngModel)]="userForm.activo" name="activo">
+            <option [ngValue]="true">Activo</option>
+            <option [ngValue]="false">Inactivo</option>
+          </select>
+        </label>
+        <label>
+          <span>{{ editingUserId ? 'Nueva contrasena opcional' : 'Contrasena' }}</span>
+          <input [(ngModel)]="userForm.password" name="password" type="password" placeholder="Contrasena" />
+        </label>
+        <button type="submit" class="primary-action">
+          {{ editingUserId ? 'Actualizar usuario' : 'Crear usuario' }}
+        </button>
+      </form>
+
+      <div class="filters-row">
+        <input [(ngModel)]="searchTerm" name="userSearch" type="search" placeholder="Buscar usuario" />
+        <select [(ngModel)]="roleFilter" name="roleFilter">
+          <option value="TODOS">Todos los roles</option>
+          <option value="ADMIN">Administrador</option>
+          <option value="TECNICO">Tecnico</option>
+          <option value="CLIENTE">Cliente</option>
+        </select>
+        <select [(ngModel)]="activeFilter" name="activeFilter">
+          <option value="TODOS">Todos los estados</option>
+          <option value="ACTIVOS">Activos</option>
+          <option value="INACTIVOS">Inactivos</option>
+        </select>
+      </div>
+
+      <ion-list>
+        <ion-item *ngFor="let user of filteredUsers" class="user-item">
+          <div class="user-row">
+            <div>
+              <h3>{{ user.nombre }}</h3>
+              <p>{{ user.cedula || user.usuario }} <span *ngIf="user.email">- {{ user.email }}</span></p>
+            </div>
+            <div class="user-actions">
+              <ion-badge [color]="getRoleBadgeColor(user.rol)">{{ getRoleLabel(user.rol) }}</ion-badge>
+              <ion-badge [color]="getActiveBadgeColor(user)">{{ getActiveLabel(user) }}</ion-badge>
+              <button type="button" class="text-button" (click)="editUser(user)">Editar</button>
+              <button type="button" class="text-button" (click)="toggleUserActive(user)">
+                {{ user.activo === false ? 'Activar' : 'Desactivar' }}
+              </button>
+              <button type="button" class="danger-button" (click)="deleteUser(user)">
+                <ion-icon name="trash-outline"></ion-icon>
+              </button>
+            </div>
+          </div>
+        </ion-item>
+
+        <ion-item *ngIf="filteredUsers.length === 0">
+          <ion-label class="ion-text-center">No hay usuarios con esos filtros.</ion-label>
+        </ion-item>
+      </ion-list>
+    </section>
+
+    <section *ngIf="activeTab === 'auditoria'" class="admin-section">
+      <div class="section-heading">
+        <div>
+          <p>Auditoria global</p>
+          <h1>Todos los reportes</h1>
+        </div>
+        <div class="heading-actions">
+          <button type="button" class="outline-button" (click)="exportReportsPdf()">Exportar PDF</button>
+          <button
+            type="button"
+            class="danger-outline-button"
+            [disabled]="filteredIncidents.length === 0"
+            (click)="deleteFilteredIncidents()">
+            Borrar filtrados
+          </button>
+        </div>
+      </div>
+
+      <p *ngIf="incidentMessage" class="status-message">{{ incidentMessage }}</p>
+
+      <div class="filters-row audit-filters">
+        <input [(ngModel)]="searchTerm" name="incidentSearch" type="search" placeholder="Buscar reporte, cliente o tecnico" />
+        <select [(ngModel)]="statusFilter" name="statusFilter">
+          <option value="TODOS">Todos los estados</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="Asignado">Asignado</option>
+          <option value="En Proceso">En Proceso</option>
+          <option value="Pausado">Pausado</option>
+          <option value="Finalizado">Finalizado</option>
+        </select>
+        <select [(ngModel)]="priorityFilter" name="priorityFilter">
+          <option value="TODOS">Todas las prioridades</option>
+          <option value="Low">Baja</option>
+          <option value="Medium">Media</option>
+          <option value="High">Alta</option>
+        </select>
+        <input [(ngModel)]="dateFrom" name="dateFrom" type="text" placeholder="Desde (fecha)" onfocus="(this.type='date')" onblur="(this.value === '' ? this.type='text' : this.type='date')" />
+        <input [(ngModel)]="dateTo" name="dateTo" type="text" placeholder="Hasta (fecha)" onfocus="(this.type='date')" onblur="(this.value === '' ? this.type='text' : this.type='date')" />
+      </div>
+
+      <ion-list>
+        <ion-item *ngFor="let incident of filteredIncidents" class="incident-item audit">
+          <div class="incident-content">
+            <div class="item-topline">
+              <h3>#{{ incident.id }} - {{ incident.title }}</h3>
+              <div class="audit-card-actions">
+                <ion-badge [color]="getStatusColor(getState(incident))">{{ getState(incident) }}</ion-badge>
+                <button type="button" class="danger-outline-button" style="padding: 0 10px; min-height: 32px; font-size: 0.8rem;" (click)="deleteIncident(incident)">
+                  <ion-icon name="trash-outline" style="margin-right: 4px;"></ion-icon> Borrar
+                </button>
+              </div>
+            </div>
+            <p>{{ incident.description }}</p>
+            <div class="meta-grid">
+              <span>Cliente: <strong>{{ incident.clienteNombre || 'Sin cliente' }}</strong></span>
+              <span>Tecnico: <strong>{{ incident.tecnicoNombre || 'Sin asignar' }}</strong></span>
+              <span>Fecha: <strong>{{ incident.fecha | date:'short' }}</strong></span>
+              <span>Categoria: <strong>{{ incident.categoria || 'General' }}</strong></span>
+              <span>Prioridad: <strong>{{ incident.severity || 'Medium' }}</strong></span>
+              <span>Asignacion: <strong>{{ incident.fechaAsignacion ? (incident.fechaAsignacion | date:'short') : 'Sin dato' }}</strong></span>
+              <span>Inicio: <strong>{{ incident.fechaInicio ? (incident.fechaInicio | date:'short') : 'Sin dato' }}</strong></span>
+              <span>Cierre: <strong>{{ incident.fechaCierre ? (incident.fechaCierre | date:'short') : 'Sin dato' }}</strong></span>
+              <span>Tiempo cierre: <strong>{{ formatHours(getHoursBetween(incident.fecha, incident.fechaCierre)) }}</strong></span>
+              <span>Documentacion: <strong>{{ getDocumentationStatus(incident) }}</strong></span>
+              <span>GPS inicio: <strong>{{ incident.latitudInicio ? incident.latitudInicio + ', ' + incident.longitudInicio : 'Sin dato' }}</strong></span>
+              <span>GPS cierre: <strong>{{ incident.latitudCierre ? incident.latitudCierre + ', ' + incident.longitudCierre : 'Sin dato' }}</strong></span>
+            </div>
+            <div class="evidence-grid">
+              <div class="evidence-box" *ngIf="incident.fotoUrl">
+                <strong>Evidencia inicial</strong>
+                <img [src]="incident.fotoUrl" alt="Evidencia inicial" />
+              </div>
+              <div class="evidence-box" *ngIf="incident.fotoAntesTecnicoUrl">
+                <strong>Evidencia antes tecnico</strong>
+                <img [src]="incident.fotoAntesTecnicoUrl" alt="Evidencia antes tecnico" />
+              </div>
+              <div class="evidence-box" *ngIf="incident.fotoResolucionUrl">
+                <strong>Evidencia de cierre</strong>
+                <img [src]="incident.fotoResolucionUrl" alt="Evidencia de cierre" />
+              </div>
+            </div>
+            <div class="resolution-box" *ngIf="incident.comentarios || incident.fotoResolucionUrl">
+              <strong>Resolucion</strong>
+              <p>{{ incident.comentarios || 'Sin comentario registrado.' }}</p>
+            </div>
+            <div class="resolution-box" *ngIf="incident.comentarioCliente">
+              <strong>Observacion del cliente</strong>
+              <p>{{ incident.comentarioCliente }}</p>
+            </div>
+          </div>
+        </ion-item>
+
+        <ion-item *ngIf="filteredIncidents.length === 0">
+          <ion-label class="ion-text-center">No hay reportes con esos filtros.</ion-label>
+        </ion-item>
+      </ion-list>
+    </section>
+  </main>
+</ion-content>

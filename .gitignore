@@ -1,0 +1,12 @@
+.local-postgres/
+*.apk
+*.idsig
+localtunnel.out.log
+localtunnel.err.log
+cloudflared-*.log
+cloudflare-hostname.txt
+.env
+.env.*
+node_modules/
+.next/
+*.keystore

@@ -1,0 +1,29 @@
+cd "C:\Proyectos\Proyecto 1"
+.\start-sosermin-local.ps1
+
+Get-NetTCPConnection -LocalPort 5433 -State Listen
+Get-NetTCPConnection -LocalPort 3000 -State Listen
+
+cd "C:\Proyectos\Proyecto 1\sosermin-mobile"
+npm.cmd start -- --host 0.0.0.0 --port 8100
+
+& "C:\Proyectos\Proyecto 1\start-sosermin-local.cmd"
+
+& "C:\Proyectos\Proyecto 1\start-sosermin-local.cmd"
+
+
+0932037070
+Admin12345
+
+famCQsg39mhPcQ4g
+
+cd "C:\Proyectos\Proyecto 1"
+powershell -ExecutionPolicy Bypass -File .\start-sosermin-bluestacks-web.ps1
+http://localhost:8100
+
+
+cd "C:\Proyectos\Proyecto 1"
+powershell -ExecutionPolicy Bypass -File .\start-sosermin-local.ps1
+
+cd "C:\Proyectos\Proyecto 1"
+powershell -ExecutionPolicy Bypass -File .\start-sosermin-bluestacks-web.ps1

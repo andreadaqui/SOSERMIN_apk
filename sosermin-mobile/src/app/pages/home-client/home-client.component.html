@@ -1,0 +1,197 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Panel Cliente</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="loadIncidents()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="client-content" [scrollY]="true">
+  <main class="client-shell">
+    <section class="hero-panel">
+      <div>
+        <p>Solicitante</p>
+        <h1>{{ userName }}</h1>
+        <span>Seguimiento de solicitudes e incidencias</span>
+      </div>
+      <button type="button" class="primary-action" (click)="nuevoReporte()">
+        <ion-icon name="add-outline"></ion-icon>
+        Nueva solicitud
+      </button>
+    </section>
+
+    <section class="metrics-grid">
+      <article>
+        <strong>{{ totalCount }}</strong>
+        <span>Total</span>
+      </article>
+      <article>
+        <strong>{{ pendingCount }}</strong>
+        <span>Pendientes</span>
+      </article>
+      <article>
+        <strong>{{ activeCount }}</strong>
+        <span>En atencion</span>
+      </article>
+      <article>
+        <strong>{{ finishedCount }}</strong>
+        <span>Finalizadas</span>
+      </article>
+    </section>
+
+    <nav class="client-tabs">
+      <button type="button" [class.active]="activeTab === 'activas'" (click)="setTab('activas')">
+        Activas
+      </button>
+      <button type="button" [class.active]="activeTab === 'historial'" (click)="setTab('historial')">
+        Historial
+      </button>
+      <button type="button" [class.active]="activeTab === 'alertas'" (click)="setTab('alertas')">
+        Alertas
+      </button>
+    </nav>
+
+    <p *ngIf="message" class="status-message">{{ message }}</p>
+
+    <div class="filters-row" *ngIf="activeTab !== 'alertas'">
+      <input [(ngModel)]="searchTerm" name="searchTerm" type="search" placeholder="Buscar reporte, categoria o tecnico" />
+      <select [(ngModel)]="statusFilter" name="statusFilter">
+        <option value="TODOS">Todos los estados</option>
+        <option value="Pendiente">Pendiente</option>
+        <option value="Asignado">Asignado</option>
+        <option value="En Proceso">En proceso</option>
+        <option value="Pausado">Pausado</option>
+        <option value="Finalizado">Finalizado</option>
+      </select>
+      <select [(ngModel)]="priorityFilter" name="priorityFilter">
+        <option value="TODOS">Todas las prioridades</option>
+        <option value="High">Alta</option>
+        <option value="Medium">Media</option>
+        <option value="Low">Baja</option>
+      </select>
+    </div>
+
+    <ion-list *ngIf="activeTab === 'activas'">
+      <ng-container *ngTemplateOutlet="incidentList; context: { $implicit: activeIncidents }"></ng-container>
+      <ion-item *ngIf="activeIncidents.length === 0" class="empty-item">
+        <ion-label class="ion-text-center">No tienes solicitudes activas con esos filtros.</ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-list *ngIf="activeTab === 'historial'">
+      <ng-container *ngTemplateOutlet="incidentList; context: { $implicit: historyIncidents }"></ng-container>
+      <ion-item *ngIf="historyIncidents.length === 0" class="empty-item">
+        <ion-label class="ion-text-center">Aun no tienes solicitudes finalizadas.</ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-list *ngIf="activeTab === 'alertas'">
+      <ion-item *ngFor="let incident of notifications" class="alert-item">
+        <article class="alert-card">
+          <ion-icon [name]="getStatusIcon(getState(incident))"></ion-icon>
+          <div>
+            <h2>#{{ incident.id }} - {{ incident.title }}</h2>
+            <p>{{ getNotificationText(incident) }}</p>
+            <span>{{ incident.fechaCierre || incident.fechaInicio || incident.fechaAsignacion || incident.fecha | date:'short' }}</span>
+          </div>
+        </article>
+      </ion-item>
+      <ion-item *ngIf="notifications.length === 0" class="empty-item">
+        <ion-label class="ion-text-center">No hay alertas por ahora.</ion-label>
+      </ion-item>
+    </ion-list>
+  </main>
+
+  <ng-template #incidentList let-list>
+    <ion-item *ngFor="let incident of list" class="incident-item">
+      <article class="incident-card">
+        <div class="item-topline">
+          <div>
+            <p>#{{ incident.id }} - {{ incident.categoria || 'General' }}</p>
+            <h2>{{ incident.title }}</h2>
+          </div>
+          <ion-badge [color]="getStatusColor(getState(incident))">
+            <ion-icon [name]="getStatusIcon(getState(incident))"></ion-icon>
+            {{ getState(incident) }}
+          </ion-badge>
+        </div>
+
+        <p class="description">{{ incident.description }}</p>
+
+        <div class="meta-grid">
+          <span>Prioridad: <strong>{{ getPriorityLabel(incident.severity) }}</strong></span>
+          <span>Tecnico: <strong>{{ incident.tecnicoNombre || 'Sin asignar' }}</strong></span>
+          <span>Fecha: <strong>{{ incident.fecha | date:'short' }}</strong></span>
+          <span>Calificacion: <strong>{{ incident.calificacion ? incident.calificacion + '/5' : 'Sin calificar' }}</strong></span>
+        </div>
+
+        <div class="progress-panel">
+          <div class="progress-bar">
+            <span [style.width.%]="getProgressPercent(incident)"></span>
+          </div>
+          <div class="timeline">
+            <span [class.done]="isStepDone(incident, 'Pendiente')">Reportado</span>
+            <span [class.done]="isStepDone(incident, 'Asignado')">Asignado</span>
+            <span [class.done]="isStepDone(incident, 'En Proceso')">En proceso</span>
+            <span [class.done]="isStepDone(incident, 'Finalizado')">Finalizado</span>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <button type="button" class="outline-button" (click)="toggleDetail(incident)">
+            <ion-icon name="eye-outline"></ion-icon>
+            {{ selectedIncidentId === incident.id ? 'Ocultar' : 'Detalle' }}
+          </button>
+          <button type="button" class="outline-button" (click)="openMap(incident.latitud, incident.longitud)">
+            <ion-icon name="locate-outline"></ion-icon>
+            Ubicacion
+          </button>
+        </div>
+
+        <section class="detail-panel" *ngIf="selectedIncidentId === incident.id">
+          <div class="evidence-grid">
+            <div class="evidence-box" *ngIf="incident.fotoUrl">
+              <strong>Foto reportada</strong>
+              <img [src]="incident.fotoUrl" alt="Evidencia reportada" />
+            </div>
+            <div class="evidence-box" *ngIf="incident.fotoResolucionUrl">
+              <strong>Foto de solucion</strong>
+              <img [src]="incident.fotoResolucionUrl" alt="Evidencia de solucion" />
+            </div>
+          </div>
+
+          <div class="resolution-box" *ngIf="incident.estado === 'Finalizado' || incident.comentarios">
+            <strong>Resolucion del tecnico</strong>
+            <p>{{ incident.comentarios || 'Sin comentario registrado.' }}</p>
+          </div>
+
+          <div class="comment-panel">
+            <label>
+              <span>Observacion para seguimiento</span>
+              <textarea [(ngModel)]="clientComment" rows="3" placeholder="Agrega una observacion sobre esta solicitud"></textarea>
+            </label>
+            <button type="button" class="outline-button full" (click)="guardarComentario(incident)">
+              <ion-icon name="chatbox-ellipses-outline"></ion-icon>
+              Guardar observacion
+            </button>
+          </div>
+
+          <div class="rating-panel" *ngIf="incident.estado === 'Finalizado'">
+            <strong>Califica el servicio</strong>
+            <div class="stars-row">
+              <button type="button" *ngFor="let rating of [1,2,3,4,5]" [class.active]="rating <= selectedRating" (click)="calificarServicio(incident, rating)">
+                <ion-icon name="star-outline"></ion-icon>
+              </button>
+            </div>
+          </div>
+        </section>
+      </article>
+    </ion-item>
+  </ng-template>
+</ion-content>

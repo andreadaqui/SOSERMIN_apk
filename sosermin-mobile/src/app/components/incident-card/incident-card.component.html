@@ -1,0 +1,28 @@
+<div class="incident-card-container">
+  <!-- Estado 1: CARGANDO -->
+  <div *ngIf="loading" class="state-loading" aria-live="polite">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando información de la incidencia...</p>
+  </div>
+
+  <!-- Estado 2: ERROR -->
+  <div *ngIf="!loading && error" class="state-error" role="alert">
+    <p class="error-msg">{{ error }}</p>
+    <button class="retry-btn" (click)="onRetry.emit()">Reintentar</button>
+  </div>
+
+  <!-- Estado 3: VACÍO -->
+  <div *ngIf="!loading && !error && !data" class="state-empty">
+    <p>No hay detalles de incidencia disponibles.</p>
+  </div>
+
+  <!-- Estado 4: CON DATOS -->
+  <div *ngIf="!loading && !error && data" class="state-data" (click)="onSelect.emit(data.id)">
+    <div class="card-header">
+      <h3>{{ data.title }}</h3>
+      <span class="badge" [ngClass]="data.severity">{{ data.severity }}</span>
+    </div>
+    <p class="description">{{ data.description }}</p>
+    <small class="timestamp">{{ data.createdAt | date:'medium' }}</small>
+  </div>
+</div>

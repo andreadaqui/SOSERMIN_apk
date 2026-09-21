@@ -1,0 +1,208 @@
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.module-content {
+  --background: linear-gradient(160deg, #f4fbf3 0%, #fffaf0 58%, #fff0bd 100%);
+}
+
+.module-shell {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: 16px 16px calc(env(safe-area-inset-bottom) + 70px);
+  box-sizing: border-box;
+}
+
+.module-topbar {
+  height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.module-topbar strong {
+  color: #101828;
+  font-size: 1.02rem;
+  font-weight: 900;
+}
+
+.back-button {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(9, 95, 40, 0.12);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0b6623;
+  font-size: 1.25rem;
+  box-shadow: 0 8px 18px rgba(15, 72, 37, 0.08);
+}
+
+.module-title {
+  margin-bottom: 14px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #0b6623;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.module-title h1 {
+  margin: 0;
+  color: #101828;
+  font-size: 1.45rem;
+  font-weight: 850;
+}
+
+.module-title p {
+  margin: 7px 0 0;
+  color: #667085;
+  line-height: 1.35;
+}
+
+.incident-form {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid rgba(9, 95, 40, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 14px 30px rgba(15, 72, 37, 0.1);
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+}
+
+.field span {
+  color: #344054;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid #dfe8dd;
+  border-radius: 8px;
+  background: #f8faf7;
+  color: #111827;
+  font: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 104px;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: #0b6623;
+  box-shadow: 0 0 0 3px rgba(11, 102, 35, 0.12);
+}
+
+.field-error {
+  margin: -6px 0 0;
+  color: #b42318;
+  font-size: 0.78rem;
+}
+
+.capture-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.capture-button,
+.primary-button {
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 850;
+}
+
+.capture-button {
+  background: #344054;
+}
+
+.capture-button.gps {
+  background: #0b6623;
+}
+
+.capture-button.camera {
+  background: #d97706;
+}
+
+.capture-button ion-icon {
+  font-size: 1.15rem;
+}
+
+.capture-button:disabled {
+  opacity: 0.75;
+}
+
+.evidence-panel {
+  display: grid;
+  gap: 12px;
+  padding: 13px;
+  border-radius: 8px;
+  background: #f8faf7;
+  border: 1px solid #e4ebe2;
+}
+
+.evidence-row strong,
+.evidence-row span {
+  display: block;
+}
+
+.evidence-row strong {
+  color: #111827;
+  font-size: 0.86rem;
+}
+
+.evidence-row span {
+  margin-top: 3px;
+  color: #667085;
+  font-size: 0.8rem;
+}
+
+.photo-preview {
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.photo-preview img {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+}
+
+.primary-button {
+  width: 100%;
+  background: #0b6623;
+}
+
+@media (max-width: 420px) {
+  .capture-grid {
+    grid-template-columns: 1fr;
+  }
+}

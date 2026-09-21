@@ -1,0 +1,199 @@
+.login-content {
+  --background: linear-gradient(160deg, #f4fbf3 0%, #fffaf0 55%, #fff0bd 100%);
+}
+
+.login-shell {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+  width: min(100%, 430px);
+  margin: 0 auto;
+  padding: 30px 22px;
+}
+
+.brand {
+  text-align: center;
+}
+
+.logo-frame {
+  width: 214px;
+  height: 70px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 1px solid rgba(9, 95, 40, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 10px 26px rgba(15, 72, 37, 0.12);
+}
+
+.logo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand h1 {
+  margin: 0;
+  color: #0b6623;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.brand p {
+  width: 260px;
+  margin: 8px auto 0;
+  color: #667085;
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.login-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(9, 95, 40, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 18px 42px rgba(15, 72, 37, 0.13);
+}
+
+.card-heading {
+  margin-bottom: 4px;
+}
+
+.card-heading h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.card-heading p {
+  margin: 6px 0 0;
+  color: #667085;
+  font-size: 0.9rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field span {
+  color: #344054;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.field input,
+.password-field {
+  width: 100%;
+  height: 48px;
+  color: #111827;
+  background: #f8faf7;
+  border: 1px solid #dfe8dd;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.field input {
+  padding: 0 14px;
+}
+
+.field input::placeholder {
+  color: #98a2b3;
+}
+
+.field input:focus,
+.password-field:focus-within {
+  border-color: #0b6623;
+  box-shadow: 0 0 0 3px rgba(11, 102, 35, 0.12);
+}
+
+.password-field {
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.password-field input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  width: auto;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.password-field input:focus {
+  box-shadow: none;
+}
+
+.password-toggle {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #344054;
+}
+
+.password-toggle svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.error-message {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.login-button {
+  height: 48px;
+  width: 100%;
+  margin-top: 2px;
+  border: 0;
+  border-radius: 8px;
+  background: #0b6623;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.98rem;
+  letter-spacing: 0;
+}
+
+.login-button:active {
+  background: #084d1b;
+}
+
+.login-button:disabled {
+  opacity: 0.7;
+}
+
+.register-link {
+  min-height: 42px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #0b6623;
+  font: inherit;
+  font-weight: 700;
+}

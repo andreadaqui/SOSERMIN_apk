@@ -1,0 +1,68 @@
+<ion-content class="login-content" [scrollY]="true">
+  <main class="login-shell">
+    <section class="brand">
+      <div class="logo-frame">
+        <img src="assets/icon/logo-sosermin.png" alt="SOSERMIN" />
+      </div>
+      <h1>SOSERMIN</h1>
+      <p>Sistema de gestion de seguridad e incidentes</p>
+    </section>
+
+    <section class="login-card">
+      <div class="card-heading">
+        <h2>Iniciar sesion</h2>
+        <p>Ingresa con tu cedula y contrasena.</p>
+      </div>
+
+      <label class="field">
+        <span>Cedula</span>
+        <input
+          [(ngModel)]="usuario"
+          name="usuario"
+          type="text"
+          inputmode="numeric"
+          autocomplete="username"
+          placeholder="Ingresa tu numero de cedula" />
+      </label>
+
+      <label class="field">
+        <span>Contrasena</span>
+        <div class="password-field">
+          <input
+            [(ngModel)]="password"
+            name="password"
+            [type]="showPassword ? 'text' : 'password'"
+            autocomplete="current-password"
+            placeholder="Ingresa tu contrasena" />
+          <button
+            type="button"
+            class="password-toggle"
+            [attr.aria-label]="showPassword ? 'Ocultar contrasena' : 'Ver contrasena'"
+            (click)="togglePasswordVisibility()">
+            <svg *ngIf="!showPassword" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <svg *ngIf="showPassword" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2.5 12s3.5-6 9.5-6c1.7 0 3.2.5 4.5 1.2M21.5 12s-3.5 6-9.5 6c-1.7 0-3.2-.5-4.5-1.2" />
+              <path d="M4 4l16 16" />
+              <path d="M9.9 9.9A3 3 0 0 0 14.1 14.1" />
+            </svg>
+          </button>
+        </div>
+      </label>
+
+      <p *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </p>
+
+      <button type="button" class="login-button" [disabled]="isLoading" (click)="onLogin()">
+        {{ isLoading ? 'INGRESANDO...' : 'INGRESAR' }}
+      </button>
+
+      <button type="button" class="register-link" (click)="irAlRegistro()">
+        No tienes cuenta? Registrate
+      </button>
+    </section>
+  </main>
+</ion-content>

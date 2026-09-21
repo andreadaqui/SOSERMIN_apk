@@ -1,0 +1,79 @@
+<ion-content class="module-content" [scrollY]="true">
+  <main class="module-shell">
+    <header class="module-topbar">
+      <button type="button" class="back-button" (click)="volverAlHome()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </button>
+      <strong>Nueva incidencia</strong>
+    </header>
+
+    <section class="module-title">
+      <p class="eyebrow">Reporte operativo</p>
+      <h1>Registrar incidencia</h1>
+      <p>Documenta la novedad con severidad, ubicacion y evidencia fotografica.</p>
+    </section>
+
+    <form class="incident-form" [formGroup]="incidentForm" (ngSubmit)="onSubmit()">
+      <label class="field">
+        <span>Titulo</span>
+        <input formControlName="title" type="text" placeholder="Ej: Falla en equipo principal" />
+      </label>
+      <p class="field-error" *ngIf="isInvalid('title')">El titulo es obligatorio.</p>
+
+      <label class="field">
+        <span>Categoria</span>
+        <select formControlName="categoria">
+          <option value="Seguridad">Seguridad</option>
+          <option value="Operaciones">Operaciones</option>
+          <option value="Mantenimiento">Mantenimiento</option>
+          <option value="Ambiente">Ambiente</option>
+          <option value="Emergencia">Emergencia</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Descripcion</span>
+        <textarea formControlName="description" rows="5" placeholder="Detalle el problema encontrado"></textarea>
+      </label>
+      <p class="field-error" *ngIf="isInvalid('description')">La descripcion es obligatoria.</p>
+
+      <label class="field">
+        <span>Severidad</span>
+        <select formControlName="severity">
+          <option value="Low">Baja</option>
+          <option value="Medium">Media</option>
+          <option value="High">Alta</option>
+        </select>
+      </label>
+
+      <section class="capture-grid">
+        <button type="button" class="capture-button gps" (click)="capturarUbicacion()" [disabled]="cargandoUbicacion">
+          <ion-spinner name="crescent" *ngIf="cargandoUbicacion"></ion-spinner>
+          <ion-icon name="location-outline" *ngIf="!cargandoUbicacion"></ion-icon>
+          <span>{{ cargandoUbicacion ? 'Obteniendo GPS' : 'Capturar GPS' }}</span>
+        </button>
+
+        <button type="button" class="capture-button camera" (click)="tomarFoto()">
+          <ion-icon name="camera-outline"></ion-icon>
+          <span>Tomar foto</span>
+        </button>
+      </section>
+
+      <section class="evidence-panel" *ngIf="ubicacion || fotoBase64">
+        <div *ngIf="ubicacion" class="evidence-row">
+          <strong>Ubicacion</strong>
+          <span>Lat {{ ubicacion.latitud }} | Lon {{ ubicacion.longitud }}</span>
+        </div>
+
+        <div *ngIf="fotoBase64" class="photo-preview">
+          <img [src]="fotoBase64" alt="Evidencia fotografica" />
+        </div>
+      </section>
+
+      <button type="submit" class="primary-button">
+        Guardar incidencia
+      </button>
+    </form>
+  </main>
+</ion-content>

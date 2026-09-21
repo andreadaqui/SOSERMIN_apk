@@ -1,0 +1,209 @@
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.module-content {
+  --background: linear-gradient(160deg, #f4fbf3 0%, #fffaf0 58%, #fff0bd 100%);
+}
+
+.module-shell {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: 16px 16px calc(env(safe-area-inset-bottom) + 70px);
+  box-sizing: border-box;
+}
+
+.module-topbar {
+  height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.module-topbar strong {
+  color: #101828;
+  font-size: 1.02rem;
+  font-weight: 900;
+}
+
+.back-button {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(9, 95, 40, 0.12);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0b6623;
+  font-size: 1.25rem;
+  box-shadow: 0 8px 18px rgba(15, 72, 37, 0.08);
+}
+
+.module-title {
+  margin-bottom: 14px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #0b6623;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.module-title h1 {
+  margin: 0;
+  color: #101828;
+  font-size: 1.45rem;
+  font-weight: 850;
+}
+
+.module-title p {
+  margin: 7px 0 0;
+  color: #667085;
+  line-height: 1.35;
+}
+
+.info-panel,
+.attendance-card,
+.success-card {
+  border: 1px solid rgba(9, 95, 40, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 14px 30px rgba(15, 72, 37, 0.1);
+}
+
+.info-panel {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 16px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.info-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #e7f6ec;
+  color: #0b6623;
+  font-size: 1.3rem;
+}
+
+.info-icon.location {
+  background: #fff4cc;
+  color: #d97706;
+}
+
+.info-row small {
+  display: block;
+  color: #667085;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.info-row strong {
+  display: block;
+  color: #111827;
+  font-size: 0.94rem;
+}
+
+.attendance-card,
+.success-card {
+  padding: 18px;
+}
+
+.attendance-card h2,
+.success-card h2 {
+  margin: 0 0 14px;
+  color: #111827;
+  font-size: 1.08rem;
+}
+
+.shift-list {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.shift-option {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #dfe8dd;
+  border-radius: 8px;
+  background: #f8faf7;
+}
+
+.shift-option.selected {
+  border-color: #0b6623;
+  box-shadow: 0 0 0 3px rgba(11, 102, 35, 0.1);
+}
+
+.shift-option input {
+  width: 18px;
+  height: 18px;
+  accent-color: #0b6623;
+}
+
+.shift-option strong,
+.shift-option small {
+  display: block;
+}
+
+.shift-option strong {
+  color: #111827;
+}
+
+.shift-option small {
+  margin-top: 3px;
+  color: #667085;
+}
+
+.primary-button {
+  width: 100%;
+  height: 48px;
+  border: 0;
+  border-radius: 8px;
+  background: #0b6623;
+  color: #ffffff;
+  font-weight: 850;
+}
+
+.success-card {
+  text-align: center;
+}
+
+.success-icon {
+  width: 70px;
+  height: 70px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: #e7f6ec;
+  color: #0b6623;
+  font-size: 2.4rem;
+}
+
+.success-card p {
+  margin: 0 0 8px;
+  color: #475467;
+}
+
+.success-card small {
+  color: #667085;
+  line-height: 1.35;
+}
