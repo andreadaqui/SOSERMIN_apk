@@ -99,3 +99,5 @@ Write-Host "- Config:   $configPath"
 Write-Host ''
 Write-Host 'Ahora ejecuta:'
 Write-Host "  .\start-sosermin-cloudflare.ps1"
+
+# Sync marker: 2026-09-23

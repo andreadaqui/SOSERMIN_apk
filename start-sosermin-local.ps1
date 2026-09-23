@@ -118,3 +118,5 @@ if (!($postgresOk -and $apiOk -and $loginOk)) {
 }
 
 Write-Host '- Login admin:     Inicio de sesion exitoso'
+
+# Sync marker: 2026-09-23

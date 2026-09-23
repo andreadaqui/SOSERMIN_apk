@@ -69,3 +69,5 @@ Write-Host "Log web: $webLog"
 Write-Host "Err web: $webErr"
 
 Start-Process 'http://localhost:8100'
+
+# Sync marker: 2026-09-23

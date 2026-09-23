@@ -41,3 +41,5 @@ foreach ($file in $envFiles) {
 Set-Content -LiteralPath $hostnameFile -Value $Hostname -Encoding ascii
 
 & (Join-Path $projectDir 'build-sosermin-apk.ps1')
+
+# Sync marker: 2026-09-23

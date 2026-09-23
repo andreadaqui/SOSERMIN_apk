@@ -85,3 +85,5 @@ if ($hostname) {
 }
 Write-Host "- Log tunnel:      $tunnelLog"
 Write-Host "- Error tunnel:    $tunnelErr"
+
+# Sync marker: 2026-09-23

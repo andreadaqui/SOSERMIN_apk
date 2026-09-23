@@ -37,3 +37,5 @@ $serial = ($device -split '\s+')[0]
 
 Write-Host ''
 Write-Host "APK instalado en BlueStacks: $serial"
+
+# Sync marker: 2026-09-23

@@ -45,3 +45,5 @@ Remove-Item -LiteralPath $alignedApk, $releaseApk, "$releaseApk.idsig" -ErrorAct
 & "$buildToolsDir\apksigner.bat" verify --print-certs $releaseApk
 
 Write-Host "APK release generado en: $releaseApk"
+
+# Sync marker: 2026-09-23
