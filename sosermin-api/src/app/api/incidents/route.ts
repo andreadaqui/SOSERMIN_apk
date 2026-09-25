@@ -1,5 +1,13 @@
+import type { Prisma } from '@prisma/client';
 import { localPrisma, mirrorToLocal, prisma } from '@/lib/prisma';
 import { jsonResponse, optionsResponse } from '@/lib/route';
+
+type IncidentWithNames = Prisma.IncidentGetPayload<{
+  include: {
+    Tecnico: { select: { nombre: true } };
+    Cliente: { select: { nombre: true } };
+  };
+}>;
 
 export async function GET(request: Request) {
   try {
@@ -11,7 +19,7 @@ export async function GET(request: Request) {
     if (tecnicoIdParam) whereClause.tecnicoId = Number(tecnicoIdParam);
     if (clienteIdParam) whereClause.clienteId = Number(clienteIdParam);
 
-    let incidents;
+    let incidents: IncidentWithNames[];
     try {
       incidents = await prisma.incident.findMany({
         where: whereClause,
