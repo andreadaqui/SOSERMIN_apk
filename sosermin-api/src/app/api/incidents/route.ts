@@ -1,13 +1,34 @@
-import type { Prisma } from '@prisma/client';
 import { localPrisma, mirrorToLocal, prisma } from '@/lib/prisma';
 import { jsonResponse, optionsResponse } from '@/lib/route';
 
-type IncidentWithNames = Prisma.IncidentGetPayload<{
-  include: {
-    Tecnico: { select: { nombre: true } };
-    Cliente: { select: { nombre: true } };
-  };
-}>;
+type IncidentWithNames = {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  categoria: string | null;
+  severidad: string;
+  estado: string;
+  latitud: number | null;
+  longitud: number | null;
+  latitudInicio: number | null;
+  longitudInicio: number | null;
+  latitudCierre: number | null;
+  longitudCierre: number | null;
+  fotoUrl: string | null;
+  fotoAntesTecnicoUrl: string | null;
+  fotoResolucionUrl: string | null;
+  comentarios: string | null;
+  comentarioCliente: string | null;
+  calificacion: number | null;
+  fecha: Date;
+  fechaAsignacion: Date | null;
+  fechaInicio: Date | null;
+  fechaCierre: Date | null;
+  tecnicoId: number | null;
+  clienteId: number | null;
+  Tecnico: { nombre: string } | null;
+  Cliente: { nombre: string } | null;
+};
 
 export async function GET(request: Request) {
   try {
